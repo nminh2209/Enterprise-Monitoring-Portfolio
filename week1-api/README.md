@@ -166,11 +166,65 @@ The API has been successfully deployed to Azure Kubernetes Service (AKS) for adv
 
 ### 📋 Next Steps
 
-- **Step 3**: Install ingress controller for external AKS access
+- **Step 3**: Install ingress controller for external AKS access (✅ Completed)
 - **Step 4**: Deploy React frontend to AKS
 - **Step 5**: Implement authentication (OpenID/custom)
 - **Step 6**: Setup custom domain with HTTPS
 
-This AKS deployment demonstrates enterprise-grade Kubernetes practices: pod replication, service discovery, health monitoring, and container orchestration.
+## 🌐 Ingress Controller Setup (Week 1 Step 3 Completed)
+
+External access to the AKS-deployed API has been configured using NGINX Ingress Controller:
+
+### ✅ Completed Step 3 Tasks
+
+**Task 3.1: Install Ingress Controller**
+- ✅ NGINX Ingress Controller installed in AKS cluster
+- ✅ LoadBalancer service created with external IP: `135.171.192.18`
+- ✅ RBAC permissions and admission webhooks configured
+- ✅ IngressClass `nginx` created for routing
+
+**Task 3.2: Create Ingress Resource for API**
+- ✅ `k8s/ingress.yaml`: Ingress resource with URL rewriting
+- ✅ Regex-based path matching: `/api(/|$)(.*)`
+- ✅ Rewrite target configured to strip `/api` prefix
+- ✅ Routes all `/api/*` traffic to `week1-api-service:3000`
+
+**Task 3.3: Apply Ingress Configuration**
+- ✅ Ingress resource deployed to AKS cluster
+- ✅ External IP assigned and routing active
+- ✅ NGINX configuration reloaded automatically
+
+**Task 3.4: Verify External API Access**
+- ✅ All endpoints accessible via ingress external IP
+- ✅ URL rewriting working correctly (`/api/health` → `/health`)
+- ✅ Load balancing across pod replicas confirmed
+
+**Task 3.5: Update Repository and Documentation**
+- ✅ Ingress manifests added to repository
+- ✅ Documentation updated with external access details
+
+### 🌐 External Access Details
+
+- **Ingress External IP**: `135.171.192.18`
+- **API Base URL**: `http://135.171.192.18/api`
+- **Health Check**: `http://135.171.192.18/api/health`
+- **Hello World**: `http://135.171.192.18/api/`
+- **Personalized Hello**: `http://135.171.192.18/api/hello/{name}`
+
+### 🔄 Updated Deployment Comparison
+
+| Deployment Method | URL | Access Type | Use Case |
+|-------------------|-----|-------------|----------|
+| **Azure Web App** | `https://mindx-week1-api.azurewebsites.net` | Public HTTPS | Simple deployment, external access |
+| **AKS Internal** | `week1-api-service:3000` | Internal cluster | Microservices, advanced orchestration |
+| **AKS External** | `http://135.171.192.18/api/*` | Public HTTP | External API access via ingress |
+
+### 📋 Next Steps
+
+- **Step 4**: Deploy React frontend to AKS (same cluster)
+- **Step 5**: Implement authentication (OpenID/custom)
+- **Step 6**: Setup custom domain with HTTPS
+
+This ingress setup demonstrates advanced Kubernetes networking: external load balancing, URL rewriting, and path-based routing for microservices architecture.
 
 This deployment demonstrates core DevOps practices: containerization, container registries, and cloud deployment with Infrastructure as Code principles.
