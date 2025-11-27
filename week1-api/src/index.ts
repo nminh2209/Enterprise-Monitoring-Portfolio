@@ -1,4 +1,6 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import cors from 'cors';
+import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import * as openid from 'openid-client';
@@ -10,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // OpenID Connect Configuration
 const OIDC_ISSUER_URL = 'https://id-dev.mindx.edu.vn';
 const OIDC_CLIENT_ID = 'mindx-onboarding';
-const OIDC_CLIENT_SECRET = 'cHJldmVudGJvdW5kYmF0dHJlZWV4cGxvcmVjZWxsbmVydm91c3ZhcG9ydGhhbnN0ZWU';
+const OIDC_CLIENT_SECRET = 'cHJldmVudGJvdW5kYmF0dHJlZWV4cGxvcmVjZWxsbmVydm91c3ZhcG9ydGhhbnN0ZWU=';
 const REDIRECT_URI = process.env.REDIRECT_URI || 'http://localhost:3000/auth/callback';
 
 // JWT Secret for signing tokens
@@ -22,6 +24,11 @@ let authorizationEndpoint: string = '';
 
 // Middleware
 app.use(express.json());
+// Enable CORS for frontend
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true
+}));
 
 // JWT Middleware for protecting routes
 const jwtMiddleware = expressjwt({
@@ -84,31 +91,83 @@ app.get('/auth/login', async (req: Request, res: Response) => {
 // Callback endpoint - handle OpenID provider response
 app.get('/auth/callback', async (req: Request, res: Response) => {
   try {
-    if (!oidcConfig) {
-      return res.status(500).json({ error: 'OpenID client not initialized' });
+    const code = req.query.code as string;
+    const state = req.query.state as string;
+    
+    console.log('Received callback with code:', code ? 'present' : 'missing');
+    console.log('State:', state);
+    
+    if (!code) {
+      return res.status(400).json({ error: 'No authorization code received', query: req.query });
     }
 
-    const params = oidcConfig.callbackParams(req);
-    const tokenSet = await oidcConfig.callback(REDIRECT_URI, params, {
-      expectedState: req.query.state as string,
+    // Manually exchange code for tokens
+    console.log('Exchanging code for tokens...');
+    console.log('Client ID:', OIDC_CLIENT_ID);
+    console.log('Client Secret (first 10 chars):', OIDC_CLIENT_SECRET.substring(0, 10) + '...');
+    console.log('Redirect URI:', REDIRECT_URI);
+    console.log('Code:', code);
+    
+    const tokenParams = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: REDIRECT_URI,
+      client_id: OIDC_CLIENT_ID,
+      client_secret: OIDC_CLIENT_SECRET,
     });
 
-    // Create JWT token with user info
-    const claims = tokenSet.claims();
+    console.log('Token endpoint:', `${OIDC_ISSUER_URL}/token`);
+    console.log('Request body:', tokenParams.toString());
+
+    const tokenResponse = await fetch(`${OIDC_ISSUER_URL}/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: tokenParams.toString(),
+    });
+    
+    console.log('Token response status:', tokenResponse.status);
+
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error('Token exchange failed:', errorText);
+      throw new Error(`Token exchange failed: ${tokenResponse.status} ${errorText}`);
+    }
+
+    const tokens: any = await tokenResponse.json();
+    console.log('Token exchange successful');
+    
+    // Decode the ID token to get user info
+    const idToken = tokens.id_token;
+    if (!idToken) {
+      throw new Error('No ID token received');
+    }
+
+    // Decode JWT (without verification for now, since we got it directly from the provider)
+    const claims = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString());
+    console.log('User claims:', claims);
+    
     const userInfo = {
-      sub: claims?.sub,
-      email: claims?.email,
-      name: claims?.name,
-      preferred_username: claims?.preferred_username,
+      sub: claims.sub,
+      email: claims.email,
+      name: claims.name,
+      preferred_username: claims.preferred_username,
     };
 
     const jwtToken = jwt.sign(userInfo, JWT_SECRET, { expiresIn: '1h' });
 
     // Redirect to frontend with token
-    res.redirect(`https://mindx-minhnh.135.171.192.18.nip.io/?token=${jwtToken}`);
+    const redirectUrl = `http://localhost:3001/auth-landing?token=${jwtToken}`;
+    console.log('Redirecting to frontend with token:', redirectUrl);
+    res.redirect(redirectUrl);
   } catch (error) {
-    console.error('Callback error:', error);
-    res.status(500).json({ error: 'Authentication callback failed' });
+    console.error('Callback error details:', error);
+    res.status(500).json({ 
+      error: 'Authentication callback failed', 
+      details: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
   }
 });
 

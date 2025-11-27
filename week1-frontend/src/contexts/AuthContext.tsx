@@ -27,12 +27,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
     // Check if user is returning from authentication
     const urlParams = new URLSearchParams(window.location.search);
     const authToken = urlParams.get('token');
+
+    console.log('[AuthContext] URL token:', authToken);
 
     if (authToken) {
       // Handle JWT token from callback
@@ -44,21 +46,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         // Store the token
         localStorage.setItem('auth_token', authToken);
+        console.log('[AuthContext] Saved token to localStorage:', authToken);
 
         // Clear the token from URL
         window.history.replaceState({}, document.title, window.location.pathname);
       } catch (err) {
-        console.error('Error handling auth token:', err);
+        console.error('[AuthContext] Error handling auth token:', err);
       }
     } else {
       // Check for existing token
       const storedToken = localStorage.getItem('auth_token');
+      console.log('[AuthContext] Stored token in localStorage:', storedToken);
       if (storedToken) {
         try {
           const payload = JSON.parse(atob(storedToken.split('.')[1]));
           setUser(payload);
           setToken(storedToken);
         } catch (err) {
+          console.error('[AuthContext] Error handling stored token:', err);
           localStorage.removeItem('auth_token');
           setToken(null);
         }
