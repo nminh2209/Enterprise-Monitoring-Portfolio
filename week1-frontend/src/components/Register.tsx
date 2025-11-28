@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Auth.css';
 
 interface RegisterFormData {
@@ -10,6 +11,9 @@ interface RegisterFormData {
 }
 
 const Register: React.FC = () => {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
     password: '',
@@ -19,6 +23,26 @@ const Register: React.FC = () => {
   const [errors, setErrors] = useState<Partial<RegisterFormData>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>Loading...</h1>
+            <p>Checking authentication status</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const validateForm = (): boolean => {
     const newErrors: Partial<RegisterFormData> = {};

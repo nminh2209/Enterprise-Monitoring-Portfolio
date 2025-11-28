@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = () => {
     // Redirect to API's login endpoint
-    window.location.href = `${API_BASE_URL.replace('/api', '')}/auth/login`;
+    window.location.href = `${API_BASE_URL}/auth/login`;
   };
 
   const logout = () => {
@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
 
     // Optional: Call API logout endpoint
-    fetch(`${API_BASE_URL.replace('/api', '')}/auth/logout`, {
+    fetch(`${API_BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
