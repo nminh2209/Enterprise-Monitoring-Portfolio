@@ -1,3 +1,25 @@
+// Initialize Application Insights FIRST before any other imports
+import * as appInsights from 'applicationinsights';
+
+// Setup Application Insights with instrumentation key
+const APPINSIGHTS_INSTRUMENTATIONKEY = process.env.APPINSIGHTS_INSTRUMENTATIONKEY || 
+  'f97d9fcc-bf08-46d9-985c-458c6fa4ce7a';
+
+if (APPINSIGHTS_INSTRUMENTATIONKEY) {
+  appInsights.setup(APPINSIGHTS_INSTRUMENTATIONKEY)
+    .setAutoDependencyCorrelation(true)
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true, true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoCollectConsole(true)
+    .setUseDiskRetryCaching(true)
+    .setSendLiveMetrics(true)
+    .start();
+  
+  console.log('✅ Application Insights initialized');
+}
+
 import express from 'express';
 import cors from 'cors';
 import type { Request, Response } from 'express';
@@ -160,12 +182,40 @@ app.get('/auth/callback', async (req: Request, res: Response) => {
 
     const jwtToken = jwt.sign(userInfo, JWT_SECRET, { expiresIn: '1h' });
 
+    // Track successful login event in Application Insights
+    const telemetryClient = appInsights.defaultClient;
+    if (telemetryClient) {
+      telemetryClient.trackEvent({
+        name: 'UserLogin',
+        properties: {
+          userId: userInfo.sub,
+          email: userInfo.email,
+          username: userInfo.preferred_username,
+          authMethod: 'OpenID',
+        },
+      });
+      console.log('📊 Login event tracked in Application Insights');
+    }
+
     // Redirect to frontend with token
     const redirectUrl = `${FRONTEND_URL}/auth-landing?token=${jwtToken}`;
     console.log('Redirecting to frontend with token:', redirectUrl);
     res.redirect(redirectUrl);
   } catch (error) {
     console.error('Callback error details:', error);
+    
+    // Track authentication failure in Application Insights
+    const telemetryClient = appInsights.defaultClient;
+    if (telemetryClient) {
+      telemetryClient.trackException({
+        exception: error instanceof Error ? error : new Error(String(error)),
+        properties: {
+          endpoint: '/auth/callback',
+          errorType: 'AuthenticationFailure',
+        },
+      });
+    }
+    
     res.status(500).json({ 
       error: 'Authentication callback failed', 
       details: error instanceof Error ? error.message : 'Unknown error',
@@ -176,6 +226,17 @@ app.get('/auth/callback', async (req: Request, res: Response) => {
 
 // Logout endpoint
 app.post('/auth/logout', (req: Request, res: Response) => {
+  // Track logout event
+  const telemetryClient = appInsights.defaultClient;
+  if (telemetryClient) {
+    telemetryClient.trackEvent({
+      name: 'UserLogout',
+      properties: {
+        endpoint: '/auth/logout',
+      },
+    });
+  }
+  
   // In a real app, you might want to revoke tokens or clear sessions
   res.json({ message: 'Logged out successfully' });
 });
@@ -194,10 +255,20 @@ const requireAuth = (req: Request, res: Response, next: Function) => {
 
 // Health check endpoint (public)
 app.get('/health', (req: Request, res: Response) => {
+  // Track health check requests
+  const telemetryClient = appInsights.defaultClient;
+  if (telemetryClient) {
+    telemetryClient.trackMetric({
+      name: 'HealthCheckRequests',
+      value: 1,
+    });
+  }
+  
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    service: 'week1-api'
+    service: 'week1-api',
+    appInsights: APPINSIGHTS_INSTRUMENTATIONKEY ? 'enabled' : 'disabled'
   });
 });
 

@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies
-RUN npm install
+# Install all dependencies with legacy peer deps to handle React version conflicts
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .

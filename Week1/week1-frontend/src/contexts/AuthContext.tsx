@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { appInsights } from '../appInsights';
 
 export interface User {
   sub?: string;
@@ -74,11 +75,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = () => {
+    // Track login attempt in Application Insights
+    appInsights.trackEvent({ name: 'LoginAttempt' });
+    
+    // Track with Google Analytics
+    if (window.gtag) {
+      window.gtag('event', 'login_click', {
+        event_category: 'Authentication',
+        event_label: 'Login Button Click'
+      });
+    }
+    
     // Redirect to API's login endpoint
     window.location.href = `${API_BASE_URL}/auth/login`;
   };
 
   const logout = () => {
+    // Track logout event in Application Insights
+    appInsights.trackEvent({ 
+      name: 'UserLogout',
+      properties: {
+        userId: user?.sub,
+        username: user?.preferred_username
+      }
+    });
+    
+    // Track with Google Analytics
+    if (window.gtag) {
+      window.gtag('event', 'logout', {
+        event_category: 'Authentication',
+        event_label: 'User Logout'
+      });
+    }
+    
     // Clear local storage and state
     localStorage.removeItem('auth_token');
     setUser(null);

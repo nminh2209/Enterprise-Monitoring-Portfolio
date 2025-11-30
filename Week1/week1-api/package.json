@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "applicationinsights": "^2.9.5",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "express-jwt": "^8.5.1",
