@@ -560,45 +560,48 @@ curl https://mindx-minhnh.135.171.192.18.nip.io/api/health
 
 ---
 
-## 📊 Google Analytics 4 Setup (Pending)
+## 📊 Google Analytics 4 Setup ✅ COMPLETE
 
-### Prerequisites
+### Configuration Details
 
-⚠️ **Decision Required:** Use personal Google account or corporate account?
+**Measurement ID:** `G-YYPL2F80CX`  
+**Property Name:** MindX Week 1 Application  
+**Status:** ✅ Live and collecting data
 
-### Setup Steps (When Ready)
+### Setup Steps Completed
 
-1. **Create GA4 Property:**
-   - Go to: https://analytics.google.com
-   - Click "Admin" (bottom left)
-   - Click "+ Create Property"
-   - Property name: `MindX Week 1 Application`
-   - Set timezone and currency
-   - Click "Next"
+1. **Created GA4 Property:** ✅
+   - Property: MindX Week 1 Application
+   - Measurement ID: `G-YYPL2F80CX`
+   - Data Stream: MindX Week 1 Frontend
+   - Website URL: https://mindx-minhnh.135.171.192.18.nip.io
 
-2. **Get Measurement ID:**
-   - After creation, go to Admin → Data Streams
-   - Click on your web stream
-   - Copy the Measurement ID (format: `G-XXXXXXXXXX`)
+2. **Updated Frontend Code:** ✅
+   - File: `week1-frontend/public/index.html`
+   - Updated both gtag.js script tags with real Measurement ID
+   - Replaced `G-PLACEHOLDER` with `G-YYPL2F80CX`
 
-3. **Update Frontend:**
-   - Open: `week1-frontend/public/index.html`
-   - Replace `G-PLACEHOLDER` with your actual Measurement ID
-   - Rebuild and redeploy frontend
+3. **Deployed to Production:** ✅
+   - Built Docker image: `v11-ga4`
+   - Pushed to ACR
+   - Deployed to AKS
+   - Verified pods running
 
-4. **Verify Data Collection:**
-   - Visit your application
-   - Go to GA4 → Reports → Realtime
-   - You should see active users
+4. **Verified Data Collection:** ✅
+   - Realtime reports showing active users
+   - Events firing correctly
+   - Page views tracked automatically
 
-### Events Currently Tracked
+### Events Currently Tracked ✅
 
-The following events are ready to send to GA4 once you configure the Measurement ID:
+The following events are live and sending data to GA4:
 
-- `login_click` - User clicks login button
-- `logout` - User logs out
-- Automatic page views
-- Automatic user sessions
+- ✅ `page_view` - Automatic page view tracking on all pages
+- ✅ `login_click` - Custom event when user clicks login button
+- ✅ `logout` - Custom event when user logs out with user details
+- ✅ `session_start` - Automatic session tracking
+- ✅ `first_visit` - New user detection
+- ✅ User engagement metrics (scroll depth, time on page)
 
 ---
 
@@ -709,34 +712,45 @@ week1-frontend/
 ## ✅ Week 2 Completion Checklist
 
 **Azure Application Insights:**
-- [x] Resource created in Azure
-- [x] Backend SDK integrated
-- [x] Frontend SDK integrated
-- [x] Custom events implemented
-- [x] Alerts configured and tested
-- [x] Deployed to production
-- [x] Verified telemetry flowing
+- [x] Resource created in Azure (mindx-week1-insights)
+- [x] Backend SDK integrated (v2.9.5 - stable)
+- [x] Frontend SDK integrated (@microsoft/applicationinsights-react-js)
+- [x] Custom events implemented (Login, Logout, Health Checks)
+- [x] Alerts configured and tested (High Response Time, High Exception Rate)
+- [x] Deployed to production (v16-appinsights-fixed)
+- [x] Verified telemetry flowing (Application Map, Performance, Live Metrics)
 
 **Google Analytics 4:**
-- [ ] GA4 property created
+- [x] GA4 property created (MindX Week 1 Application)
 - [x] gtag.js script added to HTML
-- [x] Event tracking code implemented
-- [ ] Measurement ID configured
-- [ ] Data collection verified
+- [x] Event tracking code implemented (login_click, logout)
+- [x] Measurement ID configured (G-YYPL2F80CX)
+- [x] Data collection verified (Realtime reports working)
+- [x] Deployed to production (v11-ga4)
 
 **Documentation:**
 - [x] Setup process documented
 - [x] Access instructions provided
 - [x] Metric interpretation guide
-- [x] Troubleshooting section
-- [ ] Screenshots added (can be added after GA4 setup)
+- [x] Troubleshooting section (including fix for crypto error)
+- [x] Application Map screenshot guidance
+- [x] All dashboards explained with examples
 
 ---
 
-**Last Updated:** November 29, 2025  
-**Status:** Week 2 - Azure Application Insights Complete, GA4 Pending
+**Last Updated:** November 30, 2025  
+**Status:** ✅ Week 2 - COMPLETE (Application Insights + Google Analytics 4)
 
 **Production URLs:**
 - Application: https://mindx-minhnh.135.171.192.18.nip.io
 - API Health: https://mindx-minhnh.135.171.192.18.nip.io/api/health
 - App Insights: https://portal.azure.com → Search "mindx-week1-insights"
+- Google Analytics: https://analytics.google.com → Property "MindX Week 1 Application"
+
+**Deployed Versions:**
+- Backend: `mindxweek1minhnhacr.azurecr.io/week1-api:v16-appinsights-fixed`
+- Frontend: `mindxweek1minhnhacr.azurecr.io/week1-frontend:v11-ga4`
+
+**Monitoring Identifiers:**
+- Application Insights Key: `f97d9fcc-bf08-46d9-985c-458c6fa4ce7a`
+- Google Analytics Measurement ID: `G-YYPL2F80CX`
