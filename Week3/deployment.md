@@ -143,12 +143,14 @@ kubectl logs -l app=qdrant
 ### 3.1 Create API Secrets
 ```bash
 kubectl create secret generic week1-secrets \
-  --from-literal=OPENROUTER_API_KEY='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' \
-  --from-literal=JWT_SECRET='mindx-week1-secret-key-2024' \
-  --from-literal=APPINSIGHTS_INSTRUMENTATIONKEY='f97d9fcc-bf08-46d9-985c-458c6fa4ce7a' \
+  --from-literal=OPENROUTER_API_KEY='<your-openrouter-key>' \
+  --from-literal=JWT_SECRET='<your-jwt-secret>' \
+  --from-literal=APPINSIGHTS_INSTRUMENTATIONKEY='<your-app-insights-key>' \
   --from-literal=OIDC_CLIENT_SECRET='<your-oidc-secret>' \
   --dry-run=client -o yaml | kubectl apply -f -
 ```
+
+**⚠️ SECURITY NOTE**: Never commit API keys to version control. Replace placeholders with actual secrets from secure storage.
 
 ### 3.2 Verify Secrets
 ```bash

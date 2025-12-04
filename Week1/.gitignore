@@ -1,0 +1,41 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# API Keys (NEVER COMMIT)
+**/openrouter*.txt
+**/api-key*.txt
+**/secret*.txt
+
+# Documentation with secrets (safe versions in docs/week3/)
+Week1/Week3/deployment.md
+docs/plans/
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+
+# Kubernetes secrets (local copies)
+*-secret.yaml
+*-secrets.yaml
