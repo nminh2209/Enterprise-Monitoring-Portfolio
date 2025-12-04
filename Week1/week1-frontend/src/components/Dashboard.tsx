@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import UserProfile from './UserProfile';
+import Chat from './Chat';
+import KnowledgeIngest from './KnowledgeIngest';
 import './Dashboard.css';
 
 interface ApiResponse {
@@ -20,7 +22,11 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
+  console.log('🔍 Dashboard - REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+  console.log('🔍 Dashboard - API_BASE_URL:', API_BASE_URL);
+  console.log('🔍 Dashboard - Passing to components:', `${API_BASE_URL}/api`);
 
   const fetchData = useCallback(async () => {
     try {
@@ -118,6 +124,18 @@ const Dashboard: React.FC = () => {
         <button onClick={fetchData} disabled={loading} className="refresh-button">
           {loading ? 'Refreshing...' : 'Refresh Data'}
         </button>
+      </div>
+
+      <div className="chat-section">
+        <h2>AI Chat Assistant</h2>
+        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1', minWidth: '300px' }}>
+            <KnowledgeIngest apiUrl={`${API_BASE_URL}/api`} />
+          </div>
+          <div style={{ flex: '2', minWidth: '400px' }}>
+            <Chat apiUrl={`${API_BASE_URL}/api`} />
+          </div>
+        </div>
       </div>
 
       <div className="dashboard-info">

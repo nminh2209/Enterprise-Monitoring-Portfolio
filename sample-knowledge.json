@@ -1,0 +1,71 @@
+{
+  "documents": [
+    {
+      "id": "mindx-overview",
+      "text": "MindX is a technology education company that provides coding bootcamps and technology courses for students. MindX focuses on teaching programming, web development, mobile app development, and AI/ML technologies. The company operates in Vietnam and offers both online and in-person courses.",
+      "metadata": {
+        "category": "company",
+        "topic": "overview"
+      }
+    },
+    {
+      "id": "mindx-courses",
+      "text": "MindX offers various courses including: Full-stack Web Development (React, Node.js, MongoDB), Mobile Development (React Native, Flutter), AI and Machine Learning (Python, TensorFlow, PyTorch), Cloud Computing (AWS, Azure, GCP), and DevOps (Docker, Kubernetes, CI/CD). Courses are designed for beginners to advanced levels.",
+      "metadata": {
+        "category": "courses",
+        "topic": "curriculum"
+      }
+    },
+    {
+      "id": "week1-objectives",
+      "text": "Week 1 of MindX Engineer Onboarding focuses on building a full-stack authentication application. The objectives include: creating a React frontend with Microsoft SSO login, building a Node.js/Express backend with OIDC authentication, deploying to Azure Kubernetes Service (AKS) with HTTPS using Let's Encrypt, and implementing proper security practices with JWT tokens.",
+      "metadata": {
+        "category": "onboarding",
+        "topic": "week1",
+        "week": 1
+      }
+    },
+    {
+      "id": "week2-objectives",
+      "text": "Week 2 of MindX Engineer Onboarding focuses on monitoring and analytics. The objectives include: integrating Azure Application Insights for backend monitoring, adding Google Analytics 4 (GA4) for frontend user tracking, implementing custom events and metrics, creating monitoring dashboards, and understanding performance monitoring best practices.",
+      "metadata": {
+        "category": "onboarding",
+        "topic": "week2",
+        "week": 2
+      }
+    },
+    {
+      "id": "week3-objectives",
+      "text": "Week 3 of MindX Engineer Onboarding focuses on building AI applications with domain knowledge. The objectives include: integrating AI chat with OpenRouter/OpenAI, implementing RAG (Retrieval-Augmented Generation) with vector databases like Qdrant, building MCP (Model Context Protocol) tools for external integrations, adding conversation memory, and deploying AI-powered features to production with proper monitoring.",
+      "metadata": {
+        "category": "onboarding",
+        "topic": "week3",
+        "week": 3
+      }
+    },
+    {
+      "id": "aks-deployment",
+      "text": "Azure Kubernetes Service (AKS) is used for deploying containerized applications. The deployment process involves: building Docker images, pushing to Azure Container Registry (ACR), creating Kubernetes deployment manifests with resource limits, configuring services and ingress for HTTPS access, managing secrets securely, and monitoring pod health with liveness and readiness probes.",
+      "metadata": {
+        "category": "infrastructure",
+        "topic": "kubernetes"
+      }
+    },
+    {
+      "id": "rag-explanation",
+      "text": "RAG (Retrieval-Augmented Generation) is a technique that enhances AI responses by retrieving relevant information from a knowledge base before generating answers. The process involves: converting documents to embeddings using models like text-embedding-3-small, storing embeddings in vector databases (Qdrant, Pinecone, ChromaDB), performing similarity search to find relevant context, and injecting retrieved context into AI prompts for more accurate and domain-specific responses.",
+      "metadata": {
+        "category": "ai",
+        "topic": "rag"
+      }
+    },
+    {
+      "id": "qdrant-usage",
+      "text": "Qdrant is an open-source vector database optimized for similarity search. It can be deployed on Kubernetes with persistent storage. Key features include: fast vector similarity search using cosine distance, efficient storage of high-dimensional embeddings, support for metadata filtering, REST and gRPC APIs, and horizontal scalability. Qdrant is commonly used for RAG applications, semantic search, and recommendation systems.",
+      "metadata": {
+        "category": "infrastructure",
+        "topic": "vector-database"
+      }
+    }
+  ]
+}

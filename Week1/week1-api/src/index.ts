@@ -27,6 +27,9 @@ import jwt from 'jsonwebtoken';
 import { expressjwt } from 'express-jwt';
 import * as openid from 'openid-client';
 import crypto from 'crypto';
+import { handleChat } from './routes/chat.js';
+import { handleIngest } from './routes/ingest.js';
+import { initializeCollection, checkQdrantHealth } from './services/knowledge.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -302,9 +305,33 @@ app.get('/profile', requireAuth, (req: Request, res: Response) => {
   });
 });
 
+// AI Chat endpoint (protected) - with streaming support
+app.post('/chat', requireAuth, handleChat);
+
+// Knowledge base ingestion endpoint (protected)
+app.post('/ingest', requireAuth, handleIngest);
+
+// Qdrant health check endpoint
+app.get('/health/qdrant', async (req: Request, res: Response) => {
+  const isHealthy = await checkQdrantHealth();
+  res.json({
+    status: isHealthy ? 'healthy' : 'unhealthy',
+    service: 'qdrant',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Start server
 app.listen(PORT, async () => {
   await initializeOIDC();
+  
+  // Initialize Qdrant collection
+  try {
+    await initializeCollection();
+  } catch (error) {
+    console.error('⚠️ Failed to initialize Qdrant - RAG features may not work:', error);
+  }
+  
   console.log(`🚀 Week 1 API server is running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🔐 Login: http://localhost:${PORT}/auth/login`);
