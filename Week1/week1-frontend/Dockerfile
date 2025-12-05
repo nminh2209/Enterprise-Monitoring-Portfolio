@@ -2,7 +2,7 @@
 FROM node:18-alpine AS builder
 
 # Set environment variable for production build
-ARG REACT_APP_API_URL=https://mindx-minhnh.135.171.192.18.nip.io
+ARG REACT_APP_API_URL=https://mindx-minhnh.135.171.192.18.nip.io/api
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 WORKDIR /app

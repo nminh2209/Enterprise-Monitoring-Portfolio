@@ -26,7 +26,6 @@ const Dashboard: React.FC = () => {
 
   console.log('🔍 Dashboard - REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
   console.log('🔍 Dashboard - API_BASE_URL:', API_BASE_URL);
-  console.log('🔍 Dashboard - Passing to components:', `${API_BASE_URL}/api`);
 
   const fetchData = useCallback(async () => {
     try {
@@ -130,10 +129,10 @@ const Dashboard: React.FC = () => {
         <h2>AI Chat Assistant</h2>
         <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '300px' }}>
-            <KnowledgeIngest apiUrl={`${API_BASE_URL}/api`} />
+            <KnowledgeIngest apiUrl={API_BASE_URL} />
           </div>
           <div style={{ flex: '2', minWidth: '400px' }}>
-            <Chat apiUrl={`${API_BASE_URL}/api`} />
+            <Chat apiUrl={API_BASE_URL} />
           </div>
         </div>
       </div>

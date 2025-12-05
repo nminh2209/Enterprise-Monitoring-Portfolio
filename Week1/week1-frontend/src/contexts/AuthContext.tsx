@@ -37,20 +37,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     console.log('[AuthContext] URL token:', authToken);
 
+    const isTokenValid = (tokenToCheck: string): boolean => {
+      try {
+        const payload = JSON.parse(atob(tokenToCheck.split('.')[1]));
+        const exp = payload.exp;
+        if (exp) {
+          const currentTime = Math.floor(Date.now() / 1000);
+          const isValid = currentTime < exp;
+          console.log('[AuthContext] Token expiry check:', { exp, currentTime, isValid });
+          return isValid;
+        }
+        return true; // If no exp claim, assume valid
+      } catch (err) {
+        console.error('[AuthContext] Token validation error:', err);
+        return false;
+      }
+    };
+
     if (authToken) {
       // Handle JWT token from callback
       try {
-        // Decode JWT to get user info (simple decode, not validation)
-        const payload = JSON.parse(atob(authToken.split('.')[1]));
-        setUser(payload);
-        setToken(authToken);
+        if (isTokenValid(authToken)) {
+          // Decode JWT to get user info (simple decode, not validation)
+          const payload = JSON.parse(atob(authToken.split('.')[1]));
+          setUser(payload);
+          setToken(authToken);
 
-        // Store the token
-        localStorage.setItem('auth_token', authToken);
-        console.log('[AuthContext] Saved token to localStorage:', authToken);
+          // Store the token
+          localStorage.setItem('auth_token', authToken);
+          console.log('[AuthContext] Saved token to localStorage:', authToken);
 
-        // Clear the token from URL
-        window.history.replaceState({}, document.title, window.location.pathname);
+          // Clear the token from URL
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+          console.log('[AuthContext] URL token is expired');
+          localStorage.removeItem('auth_token');
+        }
       } catch (err) {
         console.error('[AuthContext] Error handling auth token:', err);
       }
@@ -60,13 +82,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('[AuthContext] Stored token in localStorage:', storedToken);
       if (storedToken) {
         try {
-          const payload = JSON.parse(atob(storedToken.split('.')[1]));
-          setUser(payload);
-          setToken(storedToken);
+          if (isTokenValid(storedToken)) {
+            const payload = JSON.parse(atob(storedToken.split('.')[1]));
+            setUser(payload);
+            setToken(storedToken);
+          } else {
+            console.log('[AuthContext] Stored token is expired, clearing...');
+            localStorage.removeItem('auth_token');
+            setToken(null);
+            setUser(null);
+          }
         } catch (err) {
           console.error('[AuthContext] Error handling stored token:', err);
           localStorage.removeItem('auth_token');
           setToken(null);
+          setUser(null);
         }
       }
     }
