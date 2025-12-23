@@ -260,10 +260,8 @@ MIT License - feel free to use in your projects!
 
 ## 👤 Author
 
-**Your Name**
-- Portfolio: [yourportfolio.com](https://yourportfolio.com)
-- LinkedIn: [linkedin.com/in/yourname](https://linkedin.com/in/yourname)
-- GitHub: [@yourusername](https://github.com/yourusername)
+- LinkedIn: [inkedin.com/in/nguyen-minh-759149223/](https://www.linkedin.com/in/nguyen-minh-759149223/)
+- GitHub: [@nminh2209](https://github.com/nminh2209)
 
 ---
 
